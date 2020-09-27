@@ -1,5 +1,5 @@
 class NegociacoesService{
-    obterNegociacoesDaSemana{
+    obterNegociacoesDaSemana (cb){
         let xhr = new XMLHttpRequest();
         xhr.open('GET', 'negociacoes/semana');
         xhr.onreadystatechange = () =>{
@@ -16,17 +16,16 @@ class NegociacoesService{
             if(xhr.readyState == 4){
                 if(xhr.status == 200){
                     
-                    JSON.parse(xhr.responseText).map(objeto  => 
-                        new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor)
-                    ).forEach(negociacao => 
-                        this._listaNegociacoes.adiciona(negociacao)
+                    cb(null, JSON.parse(xhr.responseText).map(objeto  => 
+                        new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor)));
                         
-                    );
-                } else { 
-                
+                    
+                } else {    
+                    console.log(xhr.responseText);
+                    cb('Não foi possivel obter as negociações', null);
+                }
             }
-            }
-
+            
         };
         xhr.send();
     }
